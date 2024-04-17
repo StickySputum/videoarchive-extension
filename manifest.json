@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Duplicate Link Extension",
+  "description": "Opens a duplicate tab on the same link",
+  "version": "1.0",
+  "permissions": ["activeTab","tabs","https://en.savefrom.net/*","https://youtube.com/*"],
+  "browser_action": {
+    "default_icon": "images/icon-48.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://en.savefrom.net/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
