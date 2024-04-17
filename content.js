@@ -2,23 +2,20 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message.action === "executeContentScript") {
         let finalUrl = message.finalUrl;
         if (window.location.href.includes('://en.savefrom.net/')) {
-            // Флаг для отслеживания открытия ссылки
             let linkOpened = false;
-            
-            // Функция для проверки наличия элемента и выполнения необходимых действий
+
             function checkElementAndPerformAction() {
-                var link = document.querySelector('.link-download');
-                
+                let link = document.querySelector('.link-download');
+
                 if (link && !linkOpened) {
-                    var href = link.getAttribute('href');
-                
+                    let href = link.getAttribute('href');
+
                     if (href) {
                         console.log('Найден href ссылки: ' + href);
-                        // Открываем ссылку только если она еще не была открыта
                         linkOpened = true;
-                        window.close()
-                        window.open(href, '_blank');
-                        // Отправляем сообщение в фоновый скрипт с данными для отладки
+                        console.log(finalUrl);
+                        window.open(href); // Меняем текущую вкладку на скачивание файла
+                        window.close();
                         chrome.runtime.sendMessage({
                             action: 'debugMessage',
                             message: 'Link opened successfully: ' + href
@@ -38,9 +35,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                     });
                 }
             }
-            
-            // Создание нового MutationObserver и наблюдение за изменениями
-            var observer = new MutationObserver(function(mutations) {
+
+            let observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.addedNodes) {
                         mutation.addedNodes.forEach(function(node) {
@@ -49,8 +45,39 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                     }
                 });
             });
-            
+
             observer.observe(document.body, { childList: true, subtree: true });
-        } 
+        }
+    }
+});
+
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message.action === "ManyVids") {
+        alert("БЛЯЯЯЯ")
+        let videoElement = document.getElementById('video-title-link');
+
+        if (videoElement) {
+            let videoTitle = videoElement.getAttribute('title');
+            let videoHref = videoElement.getAttribute('href');
+
+            if (videoHref) {
+                alert(`Video Title: ${videoTitle}`);
+                chrome.runtime.sendMessage({
+                    action: 'debugMessage',
+                    message: 'Video Title: ' + videoTitle
+                });
+                alert(`Video URL: ${videoHref}`);
+                chrome.runtime.sendMessage({
+                    action: 'debugMessage',
+                    message: 'Video URL: ' + videoHref
+                });
+            }
+        } else {
+            alert('Элемент не найден');
+            chrome.runtime.sendMessage({
+                action: 'debugMessage',
+                message: 'Element not found'
+            });
+        }
     }
 });
