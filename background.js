@@ -20,7 +20,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
             });
         } else if (/youtube\.com\/@[^/]+\/videos/.test(urlToDuplicate)) {
             console.log("This is YouTube channel " + activeTab.id);
-            chrome.tabs.sendMessage(activeTab.id, { action: "ManyVids" });
+            chrome.tabs.executeScript(activeTab.id, { file: 'content1.js' });
         }
     });
 });
@@ -28,5 +28,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message.action === "debugMessage") {
         console.log('[Debug message from content.js]: ' + message.message);
+    }
+    else if (message.action === 'logMessage') {
+        console.log('[Debug message from content1.js]: ' + message.message);
     }
 });

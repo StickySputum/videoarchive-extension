@@ -48,36 +48,5 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
             observer.observe(document.body, { childList: true, subtree: true });
         }
-    }
-});
-
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    if (message.action === "ManyVids") {
-        alert("БЛЯЯЯЯ")
-        let videoElement = document.getElementById('video-title-link');
-
-        if (videoElement) {
-            let videoTitle = videoElement.getAttribute('title');
-            let videoHref = videoElement.getAttribute('href');
-
-            if (videoHref) {
-                alert(`Video Title: ${videoTitle}`);
-                chrome.runtime.sendMessage({
-                    action: 'debugMessage',
-                    message: 'Video Title: ' + videoTitle
-                });
-                alert(`Video URL: ${videoHref}`);
-                chrome.runtime.sendMessage({
-                    action: 'debugMessage',
-                    message: 'Video URL: ' + videoHref
-                });
-            }
-        } else {
-            alert('Элемент не найден');
-            chrome.runtime.sendMessage({
-                action: 'debugMessage',
-                message: 'Element not found'
-            });
-        }
-    }
+    } 
 });

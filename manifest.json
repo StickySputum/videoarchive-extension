@@ -13,8 +13,13 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://en.savefrom.net/*"],
+      "matches": ["*://en.savefrom.net/*","*://youtube.com/*"],
       "js": ["content.js"]
+    },
+    {
+      "matches": ["*://en.savefrom.net/*","*://youtube.com/@*/videos"],
+      "js": ["content1.js"],
+      "run_at": "document_end"
     }
   ]
 }
