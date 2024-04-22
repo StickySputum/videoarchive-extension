@@ -32,26 +32,26 @@ class VideoDownloaderApp(QMainWindow):
 
     def create_widgets(self):
         self.output_text = QTextEdit(self)
-        self.output_text.setGeometry(10, 10, 500, 250)
+        self.output_text.setGeometry(10, 10, 680, 250)
 
         self.progress_bar = QProgressBar(self)
-        self.progress_bar.setGeometry(520, 70, 160, 20)
+        self.progress_bar.setGeometry(10, 270, 715, 20)
 
         choose_dir_button = QPushButton("Choose Save Directory", self)
-        choose_dir_button.setGeometry(520, 100, 160, 30)
+        choose_dir_button.setGeometry(700, 10, 160, 30)
         choose_dir_button.setStyleSheet("background-color: #555555; color: #FFFFFF;")
         choose_dir_button.clicked.connect(self.select_save_directory)
 
         choose_file_button = QPushButton("Choose JSON File", self)
-        choose_file_button.setGeometry(520, 140, 160, 30)
+        choose_file_button.setGeometry(700, 50, 160, 30)
         choose_file_button.setStyleSheet("background-color: #555555; color: #FFFFFF;")
         choose_file_button.clicked.connect(self.select_file)
 
         download_button = QPushButton("Download Videos", self)
-        download_button.setGeometry(520, 180, 160, 30)
+        download_button.setGeometry(700, 90, 160, 30)
         download_button.setStyleSheet("background-color: #555555; color: #FFFFFF;")
         download_button.clicked.connect(self.download_videos)
-
+        
     def select_file(self):
         self.selected_file_path, _ = QFileDialog.getOpenFileName(self, "Choose JSON File", "", "JSON files (*.json)")
         if self.selected_file_path:
