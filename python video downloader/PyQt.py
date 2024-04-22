@@ -1,5 +1,5 @@
-from PySide2.QtWidgets import *
-from PySide2.QtCore import Qt, QSettings
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt, QSettings, pyqtSignal
 import json
 from pytube import YouTube
 import threading
@@ -9,6 +9,8 @@ import sys
 import re
 
 class VideoDownloaderApp(QMainWindow):
+    update_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
@@ -22,10 +24,11 @@ class VideoDownloaderApp(QMainWindow):
         self.error_file_path = ""
 
         self.setWindowTitle("Video Downloader")
-        self.setGeometry(100, 100, 900, 300)
+        self.setGeometry(100, 100, 900, 330)
         self.setStyleSheet("background-color: #222222; color: #FFFFFF;")
 
         self.create_widgets()
+        self.update_signal.connect(self.update_interface)
 
     def create_widgets(self):
         self.output_text = QTextEdit(self)
@@ -69,23 +72,25 @@ class VideoDownloaderApp(QMainWindow):
                 stream = yt.streams.get_highest_resolution()
                 title = yt.title
 
-                # Удаляем или заменяем недопустимые символы для Windows в названии файла
                 title_clean = re.sub(r'[<>:"/\|?*]', '_', title)
                 save_path = os.path.join(save_dir, f"{title_clean}" + '.mp4')
                 stream.download(output_path=save_dir, filename=title_clean + '.mp4')
 
                 with self.lock:
                     self.successful_downloads += 1
-                    self.update_progress_bar()
-                    self.output_text.append(f"Video from link {link} downloaded successfully")
-                    if self.successful_downloads == self.total_videos:
-                        self.output_text.append("All videos have been downloaded!")
             except Exception as e:
                 self.output_text.append(f"Error downloading video from link {link}: {e}")
                 self.save_error_link(link)
                 self.successful_downloads += 1
             finally:
                 self.download_queue.task_done()
+
+            self.update_signal.emit()  # Отправка сигнала для обновления интерфейса
+
+    def update_interface(self):
+        self.update_progress_bar()
+        if self.successful_downloads == self.total_videos:
+            self.output_text.append("All videos have been downloaded!")
 
     def update_progress_bar(self):
         progress = int((self.successful_downloads / self.total_videos) * 100)
@@ -114,11 +119,9 @@ class VideoDownloaderApp(QMainWindow):
                 os.makedirs(save_dir)
             self.download_queue.put((link, save_dir))
 
-        # Create the error links file in the save directory
         self.error_file_path = os.path.join(save_dir, "error_links.txt")
 
-        # Start download threads
-        for _ in range(min(1, len(video_links))):
+        for _ in range(1):  # Запускаем только один поток
             t = threading.Thread(target=self.download_video)
             t.daemon = True
             t.start()
