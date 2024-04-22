@@ -24,9 +24,9 @@ class VideoDownloaderApp(QMainWindow):
         self.error_file_path = ""
 
         self.setWindowTitle("Video Downloader")
-        self.setGeometry(100, 100, 900, 330)
+        self.setGeometry(100, 100, 870, 300)
         self.setStyleSheet("background-color: #222222; color: #FFFFFF;")
-
+        self.setFixedSize(870, 300)  
         self.create_widgets()
         self.update_signal.connect(self.update_interface)
 
