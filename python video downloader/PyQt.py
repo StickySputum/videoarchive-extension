@@ -19,6 +19,7 @@ class VideoDownloaderApp(QMainWindow):
         self.total_videos = 0
         self.lock = threading.Lock()
         self.download_queue = Queue()
+        self.error_file_path = ""
 
         self.setWindowTitle("Video Downloader")
         self.setGeometry(100, 100, 900, 300)
@@ -69,7 +70,7 @@ class VideoDownloaderApp(QMainWindow):
                 title = yt.title
 
                 # Удаляем или заменяем недопустимые символы для Windows в названии файла
-                title_clean = re.sub(r'[<>:"/\\|?*]', '_', title)
+                title_clean = re.sub(r'[<>:"/\|?*]', '_', title)
                 save_path = os.path.join(save_dir, f"{title_clean}" + '.mp4')
                 stream.download(output_path=save_dir, filename=title_clean + '.mp4')
 
@@ -81,6 +82,7 @@ class VideoDownloaderApp(QMainWindow):
                         self.output_text.append("All videos have been downloaded!")
             except Exception as e:
                 self.output_text.append(f"Error downloading video from link {link}: {e}")
+                self.save_error_link(link)
                 self.successful_downloads += 1
             finally:
                 self.download_queue.task_done()
@@ -112,11 +114,18 @@ class VideoDownloaderApp(QMainWindow):
                 os.makedirs(save_dir)
             self.download_queue.put((link, save_dir))
 
+        # Create the error links file in the save directory
+        self.error_file_path = os.path.join(save_dir, "error_links.txt")
+
         # Start download threads
         for _ in range(min(1, len(video_links))):
             t = threading.Thread(target=self.download_video)
             t.daemon = True
             t.start()
+
+    def save_error_link(self, link):
+        with open(self.error_file_path, "a") as error_file:
+            error_file.write(link + "\n")
 
     def run(self):
         self.show()
@@ -125,4 +134,4 @@ if __name__ == '__main__':
     app = QApplication([])
     downloader_app = VideoDownloaderApp()
     downloader_app.run()
-    sys.exit(app.exec_())
+    app.exec_()
