@@ -30,9 +30,12 @@ if (window.location.href.includes("/videos")) {
         a.click();
 
         URL.revokeObjectURL(url);
+        chrome.runtime.sendMessage({ action: "DownloadList" });
     } else {
         localStorage.setItem('executeAfterReload', 'true');
         alert("После перезагрузки пролистайте все видео до конца и нажмите на расширение заново");
         location.reload();
     }
+} else {
+    alert("Это не канал ютуб")
 }

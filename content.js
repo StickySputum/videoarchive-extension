@@ -1,52 +1,25 @@
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message.action === "executeContentScript") {
-        let finalUrl = message.finalUrl;
-        if (window.location.href.includes('://en.savefrom.net/')) {
-            let linkOpened = false;
-
-            function checkElementAndPerformAction() {
-                let link = document.querySelector('.link-download');
-
-                if (link && !linkOpened) {
-                    let href = link.getAttribute('href');
-
-                    if (href) {
-                        console.log('Найден href ссылки: ' + href);
-                        linkOpened = true;
-                        console.log(finalUrl);
-                        window.open(href); // Меняем текущую вкладку на скачивание файла
-                        window.close();
-                        chrome.runtime.sendMessage({
-                            action: 'debugMessage',
-                            message: 'Link opened successfully: ' + href
-                        });
-                    } else {
-                        console.log('Ссылка не содержит атрибут href.');
-                        chrome.runtime.sendMessage({
-                            action: 'debugMessage',
-                            message: 'Link is missing href attribute'
-                        });
-                    }
-                } else {
-                    console.log('Ссылка еще не загружена, ожидаем...');
-                    chrome.runtime.sendMessage({
-                        action: 'debugMessage',
-                        message: 'Link is not loaded yet'
-                    });
-                }
-            }
-
-            let observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.addedNodes) {
-                        mutation.addedNodes.forEach(function(node) {
-                            checkElementAndPerformAction();
-                        });
-                    }
+        function displayUrlsFromStorage() {
+            chrome.storage.local.get({ urlList: [] }, function(data) {
+                var urlList = data.urlList;
+                var urlListContainer = document.getElementById('urlListContainer');
+                
+                // Clear the container before adding new URLs
+                urlListContainer.innerHTML = '';
+                
+                // Add each URL to the list
+                urlList.forEach(function(url) {
+                    var urlItem = document.createElement('div');
+                    urlItem.textContent = url;
+                    urlListContainer.appendChild(urlItem);
                 });
             });
-
-            observer.observe(document.body, { childList: true, subtree: true });
         }
-    } 
+        
+        // Call the function to display the list of URLs when the page loads
+        displayUrlsFromStorage();
+        // Send a message to background.js to add the current tab's URL to storage
+        chrome.runtime.sendMessage({ action: "addTabUrlToStorage" });
+    }
 });
