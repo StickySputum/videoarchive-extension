@@ -1,0 +1,15 @@
+.grid-rofls {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 300px 200px;
+    grid-template-rows: 300px;
+}
+
+button { 
+    margin: 3px;
+    width: 100%;
+}
+
+.list-urls {
+background-color: black;
+}
