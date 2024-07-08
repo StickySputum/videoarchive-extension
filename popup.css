@@ -16,5 +16,7 @@ button {
 }
 
 .list-urls {
-background-color: black;
+background: white;
+border: 3px solid;
+border-color: black;
 }
