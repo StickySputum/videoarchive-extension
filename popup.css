@@ -1,3 +1,8 @@
+.rapper {
+    width: 600px;
+    height: 400px;
+}
+
 .grid-rofls {
     display: grid;
     gap: 10px;
