@@ -17,6 +17,8 @@ button {
 
 .list-urls {
 background: white;
-border: 3px solid;
+border: 1px solid;
 border-color: black;
+overflow: scroll;
+overflow-x: hidden;
 }
