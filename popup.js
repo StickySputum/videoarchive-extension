@@ -1,14 +1,24 @@
 // Contents of popup.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Загрузите сохраненный URL в момент открытия всплывающего окна
-    chrome.storage.local.get('savedUrl', function(data) {
-        var savedUrl = data.savedUrl;
+    // Загружаем все сохраненные URL при открытии всплывающего окна
+    chrome.storage.local.get('savedUrls', function(data) {
+        var savedUrls = data.savedUrls || []; // Берем массив или инициализируем его
         var existingDiv = document.getElementById('urlListContainer');
 
-        if (savedUrl && existingDiv) {
-            existingDiv.innerHTML = "Сохраненная ссылка: " + savedUrl;
-        } else if (!savedUrl && existingDiv) {
-            existingDiv.innerHTML = "Сохраненная ссылка отсутствует.";
+        if (existingDiv) {
+            // Очищаем контейнер перед обновлением
+            existingDiv.innerHTML = '';
+
+            if (savedUrls.length > 0) {
+                savedUrls.forEach(function(url) {
+                    // Создаем элемент для каждой сохраненной ссылки
+                    var urlElement = document.createElement('div');
+                    urlElement.textContent = url; // Добавляем текст ссылки
+                    existingDiv.appendChild(urlElement); // Вставляем ссылку в контейнер
+                });
+            } else {
+                existingDiv.textContent = "Сохраненные ссылки отсутствуют."; // Сообщение, если массив пуст
+            }
         }
     });
     
@@ -21,9 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('clearStorage').addEventListener('click', function() {
-        chrome.storage.local.remove('savedUrl', function() {
+        chrome.storage.local.remove('savedUrls', function() {
             var existingDiv = document.getElementById('urlListContainer');
-            existingDiv.innerHTML = "Сохраненная ссылка очищена."; // Уведомление об очистке
+            existingDiv.innerHTML = "Сохраненные ссылки очищены."; // Уведомление об очистке
         });
     });
 
