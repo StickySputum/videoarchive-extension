@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('DownloadList').addEventListener('click', function() {
-        chrome.runtime.sendMessage({ action: "DownloadList1" });
+        downloadList(); // Добавить вызов функции скачивания списка
     });
 
     // Обработчик для обновления списка ссылок при получении сообщения
@@ -41,7 +41,7 @@ function loadSavedUrls() {
                 addUrlToList(url);
             });
         } else {
-            // existingDiv.textContent = "Сохраненные ссылки отсутствуют.";
+            existingDiv.textContent = "Сохраненные ссылки отсутствуют.";
         }
     });
 }
@@ -52,4 +52,22 @@ function addUrlToList(url) {
     var urlElement = document.createElement('div');
     urlElement.textContent = url; // Добавляем текст ссылки
     existingDiv.appendChild(urlElement); // Вставляем ссылку в контейнер
+}
+
+// Функция для скачивания списка ссылок как JSON
+function downloadList() {
+    chrome.storage.local.get('savedUrls', function(data) {
+        var savedUrls = data.savedUrls || [];
+        var jsonVideoLinks = JSON.stringify(savedUrls, null, 2); // Преобразуем массив в JSON
+
+        var blob = new Blob([jsonVideoLinks], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "savedUrls.json"; // Имя файла
+        a.click();
+
+        URL.revokeObjectURL(url); // Освобождаем созданный объект URL
+    });
 }
