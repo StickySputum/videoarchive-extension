@@ -41,7 +41,7 @@ function loadSavedUrls() {
                 addUrlToList(url);
             });
         } else {
-            existingDiv.textContent = "Сохраненные ссылки отсутствуют.";
+            
         }
     });
 }
