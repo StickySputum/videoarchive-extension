@@ -1,20 +1,10 @@
+alert("Бля")
+// contents of content.js
 var currentUrl = window.location.href;
 
 // Сохраняем URL в локальное хранилище (storage)
 chrome.storage.local.set({ 'savedUrl': currentUrl }, function() {
-  console.log('URL сохранен в локальное хранилище');
+  console.log('URL сохранен в локальное хранилище: ', currentUrl);
+  // Отправляем сообщение в фоновый скрипт, чтобы обновить всплывающее окно
+  chrome.runtime.sendMessage({ action: "updatePopup" });
 });
-
-chrome.storage.local.get('savedUrl', function(data) {
-    var savedUrl = data.savedUrl;
-    
-    if (savedUrl) {
-      // Найти ваш существующий div, в который нужно вставить сохраненную ссылку
-      var existingDiv = document.getElementById('yourExistingDivId');
-      
-      // Если div найден, вставляем сохраненную ссылку
-      if (existingDiv) {
-        existingDiv.innerHTML = "Сохраненная ссылка: " + savedUrl;
-      }
-    }
-  });
